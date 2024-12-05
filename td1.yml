@@ -12,7 +12,7 @@ paths:
       parameters:
         - name: nameofgroups
           in: query
-          description: Filter books by idname
+          description: Filter books by groupName
           schema:
             type: texte
             enum: [G,H,J,K]
@@ -30,9 +30,9 @@ paths:
             format: date
       responses:
         '100':
-          description: Get Successfuly of the list of books
+          description: Get Successfuly of the list of group
     post:
-      summary: Add new book
+      summary: Add new group
       requestBody:
         required: true
         content:
@@ -41,9 +41,9 @@ paths:
               $ref: '#/components/schemas/group'
       responses:
         '101':
-          description: Book created
+          description: Group created
     put:
-      summary: Update book information
+      summary: Update Group information
       requestBody:
         required: true
         content:
@@ -52,12 +52,12 @@ paths:
               $ref: '#/components/schemas/group'
       responses:
         '200':
-          description: updated update successfully
+          description: updated Group successfully
     delete:
-      summary: Delete a book by ID
+      summary: Delete group by groupName
       responses:
         '200':
-          description: Book deleted successfully
+          description: group deleted successfully
 
   /Students:
     get:
@@ -72,7 +72,7 @@ paths:
         '200':
           description: Successfuly got a list of students
     post:
-      summary: Add new 
+      summary: Add new student
       requestBody:
         required: true
         content:
@@ -81,7 +81,7 @@ paths:
               $ref: '#/components/schemas/students'
       responses:
         '201':
-          description: Author added successfuly
+          description: Student added successfuly
     put:
       summary: Update author information
       requestBody:
@@ -102,29 +102,29 @@ paths:
 components:
   schemas:
     group:
-      type: texte
+      type: text
       properties:
         id:
           type: integer
-        :
+        groupName:
           type: string
-        author:
+          enum: 
+        groupYear:
+          type: date
+        promotion:
           type: string
-        pageNumbers:
-          type: integer
-        topic:
-          type: string
-          enum: [DRAMA,ORROR, OTHER]
-        releaseDate:
+          enum: [G,H,J,K]
           type: string
           format: date
-    Author:
+    Student:
       type: object
       properties:
         id:
           type: integer
-        name:
+        StudentBirthday:
+          type: date
+        StudentName:
           type: string
-        sex:
+        StudentSex:
           type: string
           enum: [F, M]
