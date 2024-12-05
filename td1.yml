@@ -12,7 +12,7 @@ paths:
       parameters:
         - name: nameofgroups
           in: query
-          description: Filter books by groupName
+          description: Filter group by groupName
           schema:
             type: texte
             enum: [G,H,J,K]
