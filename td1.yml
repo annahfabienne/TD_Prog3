@@ -6,15 +6,16 @@ servers:
   - url: https://prog3API_server.com
     description: Mock server for testing
 paths:
-  /books:
+  /groups:
     get:
-      summary: Get a list of books
+      summary: Get a list of groups
       parameters:
-        - name: nameofbook
+        - name: nameofgroups
           in: query
           description: Filter books by idname
           schema:
-            type: string
+            type: texte
+            enum: [G,H,J,K]
         - name: startofDate
           in: query
           description: Start date of interval date
@@ -37,7 +38,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Book'
+              $ref: '#/components/schemas/group'
       responses:
         '101':
           description: Book created
@@ -48,7 +49,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Book'
+              $ref: '#/components/schemas/group'
       responses:
         '200':
           description: updated update successfully
@@ -58,26 +59,26 @@ paths:
         '200':
           description: Book deleted successfully
 
-  /authors:
+  /Students:
     get:
-      summary: Get a list of authors
+      summary: Get a list of students
       parameters:
-        - name: authorName
+        - name: studentName
           in: query
-          description: Filter authors by name
+          description: Filter students by studentName
           schema:
             type: string
       responses:
         '200':
-          description: Successfuly got a list of authors
+          description: Successfuly got a list of students
     post:
-      summary: Add new author
+      summary: Add new 
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Author'
+              $ref: '#/components/schemas/students'
       responses:
         '201':
           description: Author added successfuly
@@ -88,7 +89,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Author'
+              $ref: '#/components/schemas/student'
       responses:
         '200':
           description: Author updated successfully
@@ -100,12 +101,12 @@ paths:
 
 components:
   schemas:
-    Book:
-      type: object
+    group:
+      type: texte
       properties:
         id:
           type: integer
-        bookName:
+        :
           type: string
         author:
           type: string
