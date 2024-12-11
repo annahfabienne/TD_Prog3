@@ -1,0 +1,144 @@
+openapi: 3.0.3
+info:
+  title: Library API
+  version: 1.1.0  
+  description:  API to manage books and authors
+
+servers:
+  - url: https://api.library.com/td2  
+    description: "Production server"
+
+paths:
+  /books:
+    get:
+      summary: "Retrieve a list of books"
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 1
+        - name: pageSize
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 50
+      responses:
+        '200':
+          description: "List of books"
+
+    put:
+      summary: "Create or update a book"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CrupdateBook'
+      responses:
+        '200':
+          description: "Book created or updated"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+
+  /books/{bookId}/authors/{authorId}:
+    put:
+      summary: "Assign an author to a book"
+      parameters:
+        - name: bookId
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: authorId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: "Author updated for the book"
+
+  /books/authors:
+    put:
+      summary: "Update author for multiple books"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/UpdateBookAuthor'
+      responses:
+        '200':
+          description: "Authors updated for books"
+
+  /authors:
+    get:
+      summary: "Retrieve a list of authors"
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 1
+        - name: pageSize
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 50
+      responses:
+        '200':
+          description: "List of authors"
+
+components:
+  schemas:
+    CrupdateBook:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        bookName:
+          type: string
+          example: "Example Book"
+        pageNumbers:
+          type: integer
+          example: 300
+        topic:
+          type: string
+          enum: [ROMANCE, COMEDY, OTHER]
+          example: "COMEDY"
+        releaseDate:
+          type: string
+          format: date
+          example: "2024-12-11"
+
+    Book:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/CrupdateBook'
+        - properties:
+            author:
+              type: object
+              nullable: true
+              properties:
+                id:
+                  type: integer
+                  example: 1
+                name:
+                  type: string
+                  example: "John Doe"
+
+    UpdateBookAuthor:
+      type: object
+      properties:
+        bookId:
+          type: integer
+        authorId:
+          type: integer
