@@ -10,27 +10,26 @@ paths:
     get:
       summary: Get a list of groups
       parameters:
-        - name: nameofgroups
+        - name: groupName
           in: query
           description: Filter group by groupName
           schema:
-            type: texte
-            enum: [G,H,J,K]
-        - name: startofDate
+            type: string
+        - name: startDate
           in: query
           description: Start date of interval date
           schema:
             type: string
             format: date
-        - name: endofDate
+        - name: endDate
           in: query
           description: End date of interval date
           schema:
             type: string
             format: date
       responses:
-        '100':
-          description: Get Successfuly of the list of group
+        '200':
+          description: Successfully retrieved the list of groups
     post:
       summary: Add new group
       requestBody:
@@ -40,10 +39,10 @@ paths:
             schema:
               $ref: '#/components/schemas/group'
       responses:
-        '101':
-          description: Group created
+        '201':
+          description: Group created successfully
     put:
-      summary: Update Group information
+      summary: Update group information
       requestBody:
         required: true
         content:
@@ -52,14 +51,14 @@ paths:
               $ref: '#/components/schemas/group'
       responses:
         '200':
-          description: updated Group successfully
+          description: Group updated successfully
     delete:
       summary: Delete group by groupName
       responses:
         '200':
-          description: group deleted successfully
+          description: Group deleted successfully
 
-  /Students:
+  /students:
     get:
       summary: Get a list of students
       parameters:
@@ -70,7 +69,7 @@ paths:
             type: string
       responses:
         '200':
-          description: Successfuly got a list of students
+          description: Successfully retrieved the list of students
     post:
       summary: Add new student
       requestBody:
@@ -78,12 +77,12 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/students'
+              $ref: '#/components/schemas/student'
       responses:
         '201':
-          description: Student added successfuly
+          description: Student added successfully
     put:
-      summary: Update author information
+      summary: Update student information
       requestBody:
         required: true
         content:
@@ -92,39 +91,49 @@ paths:
               $ref: '#/components/schemas/student'
       responses:
         '200':
-          description: Author updated successfully
+          description: Student updated successfully
     delete:
-      summary: Delete an author by ID
+      summary: Delete student by ID
       responses:
         '200':
-          description: Author deleted successfully
+          description: Student deleted successfully
 
 components:
   schemas:
     group:
-      type: text
+      type: object
       properties:
         id:
           type: integer
         groupName:
           type: string
-          enum: 
         groupYear:
-          type: date
-        promotion:
-          type: string
-          enum: [G,H,J,K]
           type: string
           format: date
-    Student:
+        promotion:
+          type: string
+          enum: [G, H, J, K]
+        studentNb:
+          type: integer
+        students:
+          type: array
+          items:
+            $ref: '#/components/schemas/student'
+
+    student:
       type: object
       properties:
         id:
           type: integer
-        StudentBirthday:
-          type: date
-        StudentName:
+        studentName:
           type: string
-        StudentSex:
+        studentSex:
           type: string
-          enum: [F, M]
+          enum: [M, F]
+        studentBirthday:
+          type: string
+          format: date
+        reference:
+          type: string
+        group:
+          type: string

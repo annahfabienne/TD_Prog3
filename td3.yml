@@ -1,0 +1,256 @@
+openapi: 3.0.3
+info:
+  title: Library API
+  version: 1.2.0  
+  description: API to manage books and authors with support for import
+
+servers:
+  - url: https://api.library.com/td2
+    description: "Production server"
+  - url: http://localhost:8080/v1
+    description: "Development server"
+
+components:
+  parameters:
+    queryPagination:
+      in: query
+      description: "Pagination parameters"
+      required: false
+      schema:
+        type: object
+        properties:
+          page:
+            type: integer
+            default: 1
+          pageSize:
+            type: integer
+            default: 50
+
+    pathPagination:
+      in: path
+      description: "Pagination parameters in path"
+      required: false
+      schema:
+        type: object
+        properties:
+          page:
+            type: integer
+            default: 1
+          pageSize:
+            type: integer
+            default: 50
+
+  responses:
+    BaseResponse:
+      type: object
+      properties:
+        status:
+          type: object
+          properties:
+            code:
+              type: integer
+            message:
+              type: string
+        body:
+          type: object
+          additionalProperties: true
+
+    ImportResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/responses/BaseResponse/status'
+        body:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+
+  schemas:
+    Author:
+      type: object
+      properties:
+        id:
+          type: integer
+        authorName:
+          type: string
+        sex:
+          type: string
+          enum: [M, F, OTHER]
+
+    Book:
+      type: object
+      properties:
+        id:
+          type: integer
+        bookName:
+          type: string
+        pageNumbers:
+          type: integer
+        topic:
+          type: string
+          enum: [ROMANCE, COMEDY, OTHER]
+        releaseDate:
+          type: string
+          format: date
+        author:
+          $ref: '#/components/schemas/Author'
+
+    ImportAuthor:
+      type: object
+      properties:
+        authorName:
+          type: string
+        sex:
+          type: string
+          enum: [M, F, OTHER]
+
+    ImportBook:
+      type: object
+      properties:
+        bookName:
+          type: string
+        author:
+          type: string  
+        pageNumbers:
+          type: integer
+        topic:
+          type: string
+          enum: [ROMANCE, COMEDY, OTHER]
+        releaseDate:
+          type: string
+          format: date
+        idAuthor:
+          type: integer
+
+paths:
+  /books:
+    get:
+      summary: "Retrieve a list of books"
+      parameters:
+        - $ref: '#/components/parameters/queryPagination'
+      responses:
+        '200':
+          description: "List of books"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+
+    put:
+      summary: "Create or update a book"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Book'
+      responses:
+        '200':
+          description: "Book created or updated"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+
+  /authors:
+    get:
+      summary: "Retrieve a list of authors"
+      parameters:
+        - $ref: '#/components/parameters/queryPagination'
+      responses:
+        '200':
+          description: "List of authors"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Author'
+
+  /books/import:
+    post:
+      summary: "Import books"
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              oneOf:
+                - $ref: '#/components/schemas/ImportBook'
+                - type: string
+                  format: binary  
+      responses:
+        '200':
+          description: "Books imported successfully"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/ImportResponse'
+
+  /authors/import:
+    post:
+      summary: "Import authors"
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              oneOf:
+                - $ref: '#/components/schemas/ImportAuthor'
+                - type: string
+                  format: binary  
+      responses:
+        '200':
+          description: "Authors imported successfully"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/ImportResponse'
+
+  /books/{bookId}/authors/{authorId}:
+    put:
+      summary: "Assign an author to a book"
+      parameters:
+        - name: bookId
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: authorId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: "Author updated for the book"
+
+  /books/authors:
+    put:
+      summary: "Update author for multiple books"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/UpdateBookAuthor'
+      responses:
+        '200':
+          description: "Authors updated for books"
+
+  /authors/{authorId}/books:
+    get:
+      summary: "Get books by author"
+      parameters:
+        - name: authorId
+          in: path
+          required: true
+          schema:
+            type: integer
+        - $ref: '#/components/parameters/pathPagination'
+      responses:
+        '200':
+          description: "Books by author"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Book'
